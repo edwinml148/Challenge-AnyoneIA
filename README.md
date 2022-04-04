@@ -50,10 +50,7 @@ import_data_files()
 import pandas as pd
 
 df = pd.read_csv(datafile)
-
-df_OrderID_unique = pd.unique(df['OrderID'])
-
-print("Pedidos unicos : ",len(df_OrderID_unique))
+print("Number of Clients on file : ",len(df.index))
 ```
 
 ***Cantidad de clientes unicos en el archivo orders.csv : 602***
@@ -159,3 +156,134 @@ print( "Apellido mas comun : ", LastName_max )
 
 ***
 
+## **Question #2.1:** How many unique orders are in the orders.csv file?
+
+```python
+import pandas as pd
+
+df = pd.read_csv(datafile)
+
+df_OrderID_unique = pd.unique(df['OrderID'])
+
+print("Pedidos unicos : ",len(df_OrderID_unique))
+```
+***Pedidos unicos :  16672***
+
+***
+
+## **Question #2.2:** What is the average number of items per order (rounded to two decimal places)?
+
+```python
+import pandas as pd
+
+df = pd.read_csv(datafile)
+
+OrderID_count = df['OrderID'].value_counts()
+
+print("Valor promedio pedidos por OrdenID : ",round( OrderID_count.mean(),2) )
+```
+
+***Valor promedio pedidos por OrdenID :  1.76***
+
+***
+
+## Question #2.3: What is the highest number of items per order?
+
+```python
+import pandas as pd
+
+df = pd.read_csv(datafile)
+
+OrderID_count = df['OrderID'].value_counts()
+print("Mayor número de Items por pedido : ",OrderID_count.max())
+```
+
+***Mayor número de Items por pedido :  35***
+
+***
+
+## Question #2.4: What is the number of orders placed in October 2021?
+
+```python
+import pandas as pd
+
+df = pd.read_csv(datafile)
+
+df_dropna = df.dropna()
+
+mask = (df_dropna['Date'] > '2021-10-01') & (df_dropna['Date'] <= '2021-10-31')
+filtered_df=df_dropna.loc[mask]
+print("Numero de ordenes atendidas en octubre 2021 : ",len(filtered_df))
+```
+
+***Numero de ordenes atendidas en octubre 2021 :  437***
+
+***
+
+## Question #2.5: Which customer spent the most amount of money in 2021?
+
+```python
+import pandas as pd
+
+df = pd.read_csv(datafile)
+
+df_dropna = df.dropna()
+
+mask = (df_dropna['Date'] > '2021-01-01') & (df_dropna['Date'] <= '2021-12-31')
+filtered_df=df_dropna.loc[mask]
+
+CustomerID_counts = filtered_df['CustomerID'].value_counts()
+
+list_CustomerID = list(CustomerID_counts.index)
+
+list_Price = []
+
+for i in list_CustomerID:
+  Price = filtered_df['Price'][ filtered_df['CustomerID'] == i ].sum()
+  list_Price.append(Price)
+
+
+price_max = pd.Series( list_Price , index = list_CustomerID ).max()
+CustomerID_price_max = pd.Series( list_Price , index = list_CustomerID ).idxmax()
+
+
+df_customers = pd.read_csv("./sample_data/customers.csv")
+
+
+FirstName_price_max = list( df_customers['FirstName'][ df_customers['CustomerID'] == CustomerID_price_max ] )[0] 
+LastName_price_max = list( df_customers['LastName'][ df_customers['CustomerID'] == CustomerID_price_max ] )[0]
+
+print( FirstName_price_max + " " + LastName_price_max + " , CustomerID : "+ str(CustomerID_price_max) + " has spent $" + str(price_max) )
+```
+
+***Brandon Divas , CustomerID : 5172443 has spent $7675.0***
+
+***
+
+## Question #2.6: Historically, what is the best month for sales?
+
+```python
+import pandas as pd
+
+df = pd.read_csv(datafile)
+
+df_dropna = df.dropna()
+
+df_dropna['month'] = pd.DatetimeIndex(df_dropna['Date']).month
+
+sum_mensual = []
+
+meses = ['enero' ,'febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
+
+
+for i in range(len(meses)):
+  sum_mensual.append( df_dropna['Price'][ df_dropna['month'] == i+1 ].sum() )
+
+price_max = pd.Series( sum_mensual , index = meses )
+
+print("Historicamente , el mes con mas ingresos es : ",price_max.idxmax(),'\n')
+```
+
+***Historicamente , el mes con mas ingresos es :  enero***
+
+***
