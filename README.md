@@ -24,6 +24,7 @@ El archivo **orders.csv** tiene 6 columnas ( CustomerID, OrderID, Date, OrderTot
   <br><br/>
 </div>
 
+***
 
 Utilizamos la libreria requets para obtener la data desde el github.
 
@@ -41,8 +42,9 @@ def import_data_files():
   
 import_data_files()
 ```
+***
 
-## **Question #1**: How many unique orders are in the orders.csv file?
+## **Question #1.1**: How many unique orders are in the orders.csv file?
 
 ```python
 import pandas as pd
@@ -56,9 +58,9 @@ print("Pedidos unicos : ",len(df_OrderID_unique))
 
 ***Cantidad de clientes unicos en el archivo orders.csv : 602***
 
+***
 
-
-## **Question 2:** In how many different states do the customers live in?
+## **Question #1.2:** In how many different states do the customers live in?
 
 
 ```python
@@ -84,7 +86,9 @@ print("Cantidad de estados : ",len(state_unique),'\n')
 
 ***Cantidad de estado : 14***
 
-## **Question 3:** What is the state with most customers?
+***
+
+## **Question #1.3:** What is the state with most customers?
 
 
 ```python
@@ -106,4 +110,52 @@ print("Estado con mayoria de clientes : " , state_maximo)
 ```
 
 ***Estado con mayoria de clientes :  CA***
+
+***
+
+## **Question #1.4:** What is the state with the least customers?
+
+
+```python
+import pandas as pd
+
+df = pd.read_csv(datafile)
+
+def corregir_campo(x):
+  x_upper = x.upper()
+  characters = " "
+  x_upper = ''.join( x for x in x_upper if x not in characters)
+  return x_upper
+
+df_state_clear=df['State'].apply(corregir_campo)
+
+state_counts = df_state_clear.value_counts()
+
+state_min= state_counts[ state_counts == state_counts.min() ]
+
+
+print( "Estado con menos clientes : " , list(state_min.index) )
+```
+
+***Estado con menos clientes :  ['WA', 'NH', 'ID', 'OR', 'MA', 'IN']***
+
+***
+
+## **Question #1.5:** What is the most common last name?
+
+
+```python
+import pandas as pd
+
+df = pd.read_csv(datafile)
+
+LastName_unique = df['LastName'].map(lambda x:x.upper())
+LastName_max = LastName_unique.value_counts().idxmax()
+
+print( "Apellido mas comun : ", LastName_max )
+```
+
+***Apellido mas comun :  SMITH***
+
+***
 
